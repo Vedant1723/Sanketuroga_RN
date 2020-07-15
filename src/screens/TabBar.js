@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, Image} from 'react-native';
 
-const TabBar = ({navigation, state, descriptors, style}) => {
+const TabBar = ({navigation, state, descriptors}) => {
   return (
     <View
       style={{
@@ -12,9 +12,10 @@ const TabBar = ({navigation, state, descriptors, style}) => {
         alignItems: 'center',
         height: 56,
         borderRadius: 35,
+        padding: 5,
         margin:10,
         elevation: 10,
-        backfaceVisibility: "visible"
+        backfaceVisibility: 'hidden',
       }}>
       {state.routes.map((route, index) => {
         const {options} = descriptors[route.key];
@@ -24,15 +25,11 @@ const TabBar = ({navigation, state, descriptors, style}) => {
             : options.title !== undefined
             ? options.title
             : route.name;
-        console.log('label==>' + label);
-        console.log(style)
-        console.log('Route===>>' + route.key);
 
         const isFocused = state.index === index;
         const label2 = label.toLowerCase();
 
         const onPress = () => {
-          console.log('Pressed Route name==>>', route.name);
           const event = navigation.emit({
             type: 'tabPress',
             target: route.key,

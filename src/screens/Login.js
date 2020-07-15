@@ -1,49 +1,60 @@
-import React, {useState} from 'react';
-import axios from "axios"
 import {
-  View,
-  Text,
   Image,
-  TextInput,
   ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  ToastAndroid,
+  View,
 } from 'react-native';
+import React, {useContext, useEffect, useState} from 'react';
+
+import {AuthContext} from '../../Context';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import AsyncStorage from '@react-native-community/async-storage';
-import SimpleToast from 'react-native-simple-toast';
+import eye from "../assets/eye.png"
+import hide from "../assets/hide.png"
 
-const Signup = ({ navigation }) => {
+const Login = ({navigation}) => {
+  const [phoneNumber, setPhoneNumber] = useState();
+  const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState(null);
+  const {
+    authContext: {signIn},
+    state: {signInError},
+  } = useContext(AuthContext);
 
-  const [phoneNumber, setPhoneNumber] = useState()
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] =  useState("")
+  useEffect(() => {
+    if (signInError) {
+      setErrors(signInError);
+    }
+  }, [signInError]);
 
-  const submitCred = async () => {
-    if(!phoneNumber || !password ){
-      SimpleToast.show("Please enter all the required fields")
-    }
-    if(password != confirmPassword){
-      SimpleToast.show("Passwords do not match")
-    }
-    const config = {
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ phoneNumber, password })
-    }
-    try {
-      const res = await axios.post("http://192.168.0.107:5000/api/signup", {phoneNumber, password}, config)
-      await AsyncStorage.setItem("token", res.data.token)
-    } catch (error) {
-      setPhoneNumber()
-      setPassword("")
-      setConfirmPassword("")
-      SimpleToast.show(error.response.data.error)
+  const [pass, setPass] = useState(true)
+  const [icon, setIcon] = useState(hide)
+
+  const hidePassword = () => {
+    setPass(!pass)
+    if(icon == hide){
+      setIcon(eye)
+    } else {
+      setIcon(hide)
     }
   }
 
+  const loginUser = () => {
+    if (!phoneNumber || !password) {
+      ToastAndroid.show(
+        'Please enter all the required fields',
+        ToastAndroid.LONG,
+        ToastAndroid.CENTER,
+      );
+    } else {
+      signIn({phoneNumber, password});
+    }
+  };
   return (
-    <ScrollView>
-      <View style={{justifyContent: 'center', display: 'flex', margin: 0,}}>
+    <ScrollView style={{backgroundColor: '#fff'}}>
+      <View style={{justifyContent: 'center',alignContent:"center",display:"flex",flexDirection:"column", margin: 0}}>
         <View style={{alignItems: 'center', marginTop: 20}}>
           <Image
             source={require('../assets/corona.png')}
@@ -68,10 +79,23 @@ const Signup = ({ navigation }) => {
             flexDirection: 'row',
             marginTop: 10,
           }}>
-          <Text style={{fontWeight: 'light', color: '#808080', fontSize: 15}}>
+          <Text style={{color: '#808080', fontSize: 15}}>
             Caring for Future
           </Text>
         </View>
+        {errors ? (
+          <View>
+            <Text
+              style={{
+                color: 'red',
+                marginLeft: 30,
+                paddingTop: 10,
+                fontSize: 16,
+              }}>
+              {errors}
+            </Text>
+          </View>
+        ) : null}
         <View style={{marginTop: 20, display: 'flex'}}>
           <View
             style={{
@@ -83,6 +107,7 @@ const Signup = ({ navigation }) => {
               flexDirection: 'row',
               alignItems: 'center',
             }}>
+              
             <Image
               source={require('../assets/privacy.png')}
               style={{height: 20, width: 20, resizeMode: 'contain'}}
@@ -90,8 +115,9 @@ const Signup = ({ navigation }) => {
             <TextInput
               placeholder="Enter Mobile No."
               value={phoneNumber}
-              onChangeText = {(text) => setPhoneNumber(text)}
-              keyboardType="number-pad"              
+              onChangeText={(text) => setPhoneNumber(text)}
+              keyboardType="number-pad"
+              maxLength={10}
               style={{
                 marginLeft: 5,
                 width: '100%',
@@ -114,55 +140,23 @@ const Signup = ({ navigation }) => {
                 style={{height: 20, width: 20, resizeMode: 'contain'}}
               />
               <TextInput
-                secureTextEntry={true}
+                secureTextEntry={pass}
                 value={password}
                 onChangeText={(text) => setPassword(text)}
                 placeholder="Password"
-                style={{marginLeft: 5, width: '100%'}}></TextInput>
-            
-              <View style={{position: 'absolute', right: 0}}>
+                style={{marginHorizontal: 5, width: '85%'}}></TextInput>
+              <TouchableOpacity onPress={() => hidePassword()} style={{ right: 0}}>
                 <Image
-                  source={require('../assets/eye.png')}
-                  style={{height: 20, width: 20, resizeMode: 'contain'}}
+                  source={icon}
+                  style={{height: 20, width: 20, resizeMode: 'contain',tintColor:"#c8c8c8"}}
                 />
-              </View>
-            </View>
-          </View>
-          <View style={{display: 'flex', justifyContent: 'space-between'}}>
-            <View
-              style={{
-                //display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                borderColor: '#808080',
-             
-                borderBottomWidth: 0.5,
-                marginLeft: 30,
-                marginRight: 30,
-              }}>
-              <Image
-                source={require('../assets/lock.png')}
-                style={{height: 20, width: 20, resizeMode: 'contain'}}
-              />
-              <TextInput
-                secureTextEntry={true}
-                value={confirmPassword}
-                onChangeText={text => setConfirmPassword(text)}
-                placeholder="Confirm Password"
-                style={{marginLeft: 5, width: '100%'}}></TextInput>
-            
-              <View style={{position: 'absolute', right: 0}}>
-                <Image
-                  source={require('../assets/eye.png')}
-                  style={{height: 20, width: 20, resizeMode: 'contain'}}
-                />
-              </View>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
 
         <TouchableOpacity
-          onPress={() => submitCred()}
+          onPress={() => loginUser()}
           style={{
             backgroundColor: '#7877fe',
             alignItems: 'center',
@@ -173,16 +167,36 @@ const Signup = ({ navigation }) => {
             marginEnd: 20,
             marginTop: 20,
           }}>
-          <Text style={{color: 'white'}}>SIGNUP</Text>
+          <Text style={{color: '#fff'}}>LOGIN</Text>
         </TouchableOpacity>
 
+        <View
+          style={{
+            marginTop: 20,
+            display: 'flex',
+            justifyContent: 'space-between',
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginLeft: 30,
+            marginRight: 30,
+          }}>
+          <View
+            style={{
+              borderBottomColor: '#808080',
+              borderBottomWidth: 0.5,
 
-      
-          <View style={{display:"flex",alignItems:"center",marginTop:20}}>
-            <Text style={{color:"#808080"}}>+ Add Fingerprint</Text>
+              width: '40%',
+            }}></View>
+          <View>
+            <Text style={{fontWeight: 'bold'}}>OR</Text>
           </View>
-        
-      
+          <View
+            style={{
+              borderBottomColor: '#808080',
+              borderBottomWidth: 0.5,
+              width: '40%',
+            }}></View>
+        </View>
         <View
           style={{
             display: 'flex',
@@ -205,16 +219,16 @@ const Signup = ({ navigation }) => {
             marginBottom: 20,
           }}>
           <View style={{flexDirection: 'row'}}>
-            <Text>Already have an Account?</Text>
+            <Text>Don't have an Account?</Text>
             <Text> </Text>
             <Text
-              onPress={() => navigation.push('Login')}
+              onPress={() => navigation.navigate('Signup')}
               style={{
                 fontWeight: 'bold',
                 color: '#7877fe',
                 textDecorationLine: 'underline',
               }}>
-              Login
+              Register
             </Text>
           </View>
         </View>
@@ -223,4 +237,11 @@ const Signup = ({ navigation }) => {
   );
 };
 
-export default Signup;
+const styles = StyleSheet.create({
+  btn: {
+    textTransform: 'lowercase',
+    textAlign: 'center',
+  },
+});
+
+export default Login;
