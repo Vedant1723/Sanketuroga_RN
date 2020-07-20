@@ -80,6 +80,11 @@ const App = ({navigation}) => {
           return {
             ...prevState,
           };
+        case 'PASS_ERROR':
+          return {
+            ...prevState,
+            error: action.payload
+          }  
         case 'LOAD_ERROR':
           console.log(action.payload);
           return {
@@ -137,7 +142,7 @@ const App = ({navigation}) => {
         };
         try {
           const res = await axios.post(
-            'http://192.168.42.106:5000/api/login',
+            'http://192.168.0.115:5000/api/login',
             formData,
             config,
           );
@@ -158,7 +163,7 @@ const App = ({navigation}) => {
         };
         try {
           const res = await axios.post(
-            'http://192.168.42.106:5000/api/signup',
+            'http://192.168.0.115:5000/api/signup',
             formData,
             config,
           );
@@ -174,7 +179,7 @@ const App = ({navigation}) => {
         const token = await AsyncStorage.getItem('token');
         setAuthToken(token);
         try {
-          const res = await axios.get('http://192.168.42.106:5000/api/');
+          const res = await axios.get('http://192.168.0.115:5000/api/');
           dispatch({type: 'LOAD_USER', payload: res.data});
         } catch (error) {
           dispatch({type: 'LOAD_ERROR', payload: error.response.data.error});
@@ -182,6 +187,8 @@ const App = ({navigation}) => {
       },
       updateProfile: async (formData) => {
         const token = await AsyncStorage.getItem('token');
+
+        console.log(formData.photo)
         setAuthToken(token);
         const config = {
           headers: {
@@ -191,7 +198,7 @@ const App = ({navigation}) => {
         };
         try {
           const res = await axios.put(
-            'http://192.168.42.106:5000/api/update',
+            'http://192.168.0.115:5000/api/update',
             formData,
             config,
           );
@@ -200,6 +207,26 @@ const App = ({navigation}) => {
           dispatch({type: 'UPDATE_USER', payload: res.data});
         } catch (error) {
           dispatch({type: 'UPDATE_ERROR', payload: error.response.data.error});
+        }
+      },
+      updatePassword: async(formData) => {
+        const token = await AsyncStorage.getItem('token');
+        setAuthToken(token);
+        const config = {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: formData,
+        };
+        try {
+          const res = await axios.put(
+            'http://192.168.0.115:5000/api/updatePassword',
+            formData,
+            config,
+          );
+          dispatch({type: 'SIGN_OUT'});
+        } catch (error) {
+          dispatch({type: 'PASS_ERROR', payload: error.response.data.error});
         }
       },
       onStart: async () => {
