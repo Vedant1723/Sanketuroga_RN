@@ -1,3 +1,4 @@
+import Voice from '@react-native-community/voice';
 import {
   Dimensions,
   Image,
@@ -6,6 +7,7 @@ import {
   Text,
   ToastAndroid,
   TouchableOpacity,
+  PermissionsAndroid,
   View,
 } from 'react-native';
 import {FlatList, ScrollView, TextInput} from 'react-native-gesture-handler';
@@ -40,6 +42,7 @@ function addCommas(nStr) {
 const Stats = ({navigation}) => {
   const {
     authContext: {loadUser},
+    state: {user},
   } = useContext(AuthContext);
   useEffect(() => {
     loadUser();
@@ -54,16 +57,16 @@ const Stats = ({navigation}) => {
 
       const repoChart = await axios.get('https://api.covid19api.com/world');
 
-      let fuckData = [];
+      let coronaData = [];
       let dData = [];
       let rData = [];
 
-      repoChart.data.map((d) => fuckData.push(d.TotalConfirmed));
+      repoChart.data.map((d) => coronaData.push(d.TotalConfirmed));
       repoChart.data.map((d) => dData.push(d.TotalDeaths));
       repoChart.data.map((d) => rData.push(d.TotalRecovered));
 
-      fuckData.reverse();
-      fuckData = fuckData.slice(fuckData.length - 10, fuckData.length);
+      coronaData.reverse();
+      coronaData = coronaData.slice(coronaData.length - 10, coronaData.length);
 
       dData.reverse();
       dData = dData.slice(dData.length - 10, dData.length);
@@ -74,8 +77,7 @@ const Stats = ({navigation}) => {
       setDeathtData(dData);
       setRecoverData(rData);
 
-
-      setChartData(fuckData);
+      setChartData(coronaData);
 
       let world = repo.data;
 
@@ -101,13 +103,12 @@ const Stats = ({navigation}) => {
         active: addCommas(world.active),
         totalRecovered: addCommas(world.recovered + world.deaths),
       });
-
     };
     getWorldCases();
   }, []);
 
   async function cCases() {
-    let fuckData = [];
+    let coronaData = [];
     let dData = [];
     let rData = [];
 
@@ -128,11 +129,11 @@ const Stats = ({navigation}) => {
       'https://api.covid19api.com/total/country/' + countrySelected,
     );
 
-    repoChart.data.map((d) => fuckData.push(d.Active));
+    repoChart.data.map((d) => coronaData.push(d.Active));
     repoChart.data.map((d) => dData.push(d.Deaths));
     repoChart.data.map((d) => rData.push(d.Recovered));
 
-    fuckData = fuckData.slice(fuckData.length - 10, fuckData.length);
+    coronaData = coronaData.slice(coronaData.length - 10, coronaData.length);
 
     dData = dData.slice(dData.length - 10, dData.length);
 
@@ -141,8 +142,7 @@ const Stats = ({navigation}) => {
     setDeathtData(dData);
     setRecoverData(rData);
 
-
-    setChartData(fuckData);
+    setChartData(coronaData);
 
     countrySelected = countrySelected + "'s";
 
@@ -181,16 +181,16 @@ const Stats = ({navigation}) => {
 
     const repoChart = await axios.get('https://api.covid19api.com/world');
 
-    let fuckData = [];
+    let coronaData = [];
     let dData = [];
     let rData = [];
 
-    repoChart.data.map((d) => fuckData.push(d.TotalConfirmed));
+    repoChart.data.map((d) => coronaData.push(d.TotalConfirmed));
     repoChart.data.map((d) => dData.push(d.TotalDeaths));
     repoChart.data.map((d) => rData.push(d.TotalRecovered));
 
-    fuckData.reverse();
-    fuckData = fuckData.slice(fuckData.length - 10, fuckData.length);
+    coronaData.reverse();
+    coronaData = coronaData.slice(coronaData.length - 10, coronaData.length);
 
     dData.reverse();
     dData = dData.slice(dData.length - 10, dData.length);
@@ -201,9 +201,7 @@ const Stats = ({navigation}) => {
     setDeathtData(dData);
     setRecoverData(rData);
 
-
-    setChartData(fuckData);
-
+    setChartData(coronaData);
 
     let diff, d1;
     diff = repo.data.critical - repoYes.data.critical;
@@ -223,7 +221,6 @@ const Stats = ({navigation}) => {
 
     let world = repo.data;
 
-
     setWcases({
       totalCases: addCommas(world.cases),
       totalDeaths: addCommas(world.deaths),
@@ -231,7 +228,6 @@ const Stats = ({navigation}) => {
       // eslint-disable-next-line radix
       totalRecovered: addCommas(world.recovered + world.deaths),
     });
-
   }
 
   const [loading, setLoading] = useState(true);
@@ -275,11 +271,42 @@ const Stats = ({navigation}) => {
   };
 
   const [filteredCountries, setFilteredCountries] = useState(null);
-  
+
   const filterCountries = (text) => {
     setFilteredCountries(
       countries.filter((country) => country.country.includes(text)),
     );
+  };
+
+  speachToText = async () => {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+      {
+        title: 'Sanketuroga',
+        message: 'Sanketuroga wants to access your MicroPhone ',
+      },
+    );
+    console.log(granted);
+    let results;
+    
+    if(granted=='granted'){ 
+      // try {
+      //   const res = await Voice.
+      //   console.log("lund",res)
+      // } catch (e) {
+      //   console.error(e);
+      // }
+      Voice.onSpeechStart=(e)=>{
+        console.log("Speach Started")
+      }
+      // Voice.onSpeechRecognized=(e)=>{
+      //   console.log("Speech Recognized")
+      // }
+      // Voice.onSpeechResults=(e)=>{
+      //   results=e.value;
+      // }
+      console.log("Results:::",results);
+    }
   };
 
   const Item = ({title, urlToImage}) => {
@@ -301,7 +328,7 @@ const Stats = ({navigation}) => {
             countrySelected = title;
             cCases();
             setModalVisible(false);
-            setFilteredCountries(null)
+            setFilteredCountries(null);
           }}>
           <Image
             style={{width: 40, height: 30, borderRadius: 5}}
@@ -369,7 +396,7 @@ const Stats = ({navigation}) => {
                     setModalVisible(!modalVisible);
                     countrySelected = 'Worldwide';
                     wCases();
-                    setFilteredCountries(null)
+                    setFilteredCountries(null);
                   }}>
                   <Image
                     source={require('../assets/close.png')}
@@ -400,7 +427,7 @@ const Stats = ({navigation}) => {
                       borderLeftWidth: 1,
                       height: 30,
                     }}></View>
-                  <TouchableOpacity>
+                  <TouchableOpacity onPress={() => speachToText()}>
                     <Image
                       source={require('../assets/mic.png')}
                       style={{height: 30, width: 30, resizeMode: 'contain'}}

@@ -68,7 +68,7 @@ const App = ({navigation}) => {
         case 'UPDATE_USER':
           return {
             ...prevState,
-            user: action.payload,
+            // user: action.payload,
           };
         case 'STARTUP':
           return {
@@ -142,7 +142,7 @@ const App = ({navigation}) => {
         };
         try {
           const res = await axios.post(
-            'http://192.168.0.115:5000/api/login',
+            'https://sanketuroga.herokuapp.com/api/login',
             formData,
             config,
           );
@@ -163,7 +163,7 @@ const App = ({navigation}) => {
         };
         try {
           const res = await axios.post(
-            'http://192.168.0.115:5000/api/signup',
+            'https://sanketuroga.herokuapp.com/api/signup',
             formData,
             config,
           );
@@ -179,33 +179,31 @@ const App = ({navigation}) => {
         const token = await AsyncStorage.getItem('token');
         setAuthToken(token);
         try {
-          const res = await axios.get('http://192.168.0.115:5000/api/');
+          const res = await axios.get('https://sanketuroga.herokuapp.com/api/');
           dispatch({type: 'LOAD_USER', payload: res.data});
         } catch (error) {
           dispatch({type: 'LOAD_ERROR', payload: error.response.data.error});
         }
       },
-      updateProfile: async (formData) => {
+      updateProfile: async (data) => {
         const token = await AsyncStorage.getItem('token');
-
-        console.log(formData.photo)
         setAuthToken(token);
         const config = {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
-          body: formData,
+          body: data,
         };
+        
         try {
           const res = await axios.put(
-            'http://192.168.0.115:5000/api/update',
-            formData,
+            'https://sanketuroga.herokuapp.com/api/update',
+            data,
             config,
           );
-          console.log('LODDDAAA', res.data);
-
           dispatch({type: 'UPDATE_USER', payload: res.data});
         } catch (error) {
+          console.log(error)
           dispatch({type: 'UPDATE_ERROR', payload: error.response.data.error});
         }
       },
@@ -220,7 +218,7 @@ const App = ({navigation}) => {
         };
         try {
           const res = await axios.put(
-            'http://192.168.0.115:5000/api/updatePassword',
+            'https://sanketuroga.herokuapp.com/api/updatePassword',
             formData,
             config,
           );

@@ -83,6 +83,10 @@ target 'Sanketuroga' do
 
   pod 'RNSVG', :path => '../node_modules/react-native-svg'
 
+  pod 'react-native-voice', :path => '../node_modules/@react-native-community/voice'
+
+  pod 'react-native-fingerprint-scanner', :path => '../node_modules/react-native-fingerprint-scanner'
+
   target 'SanketurogaTests' do
     inherit! :complete
     # Pods for testing

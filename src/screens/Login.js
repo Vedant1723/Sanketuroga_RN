@@ -6,13 +6,15 @@ import {
   TextInput,
   ToastAndroid,
   View,
+  AlertIOS,
 } from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
+import FingerprintScanner from 'react-native-fingerprint-scanner';
 
 import {AuthContext} from '../../Context';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import eye from "../assets/eye.png"
-import hide from "../assets/hide.png"
+import eye from '../assets/eye.png';
+import hide from '../assets/hide.png';
 
 const Login = ({navigation}) => {
   const [phoneNumber, setPhoneNumber] = useState();
@@ -29,17 +31,17 @@ const Login = ({navigation}) => {
     }
   }, [signInError]);
 
-  const [pass, setPass] = useState(true)
-  const [icon, setIcon] = useState(hide)
+  const [pass, setPass] = useState(true);
+  const [icon, setIcon] = useState(hide);
 
   const hidePassword = () => {
-    setPass(!pass)
-    if(icon == hide){
-      setIcon(eye)
+    setPass(!pass);
+    if (icon == hide) {
+      setIcon(eye);
     } else {
-      setIcon(hide)
+      setIcon(hide);
     }
-  }
+  };
 
   const loginUser = () => {
     if (!phoneNumber || !password) {
@@ -52,9 +54,31 @@ const Login = ({navigation}) => {
       signIn({phoneNumber, password});
     }
   };
+ const fingerAuth = () => {
+    if (FingerprintScanner.isSensorAvailable) {
+      console.log('Han Bhai');
+    } else {
+      console.log("Na Bhai")
+    }
+    const auth = FingerprintScanner.authenticate({
+      title: 'Log in with Biometrics',
+    }).then(() => {
+      //props.onAuthenticate();)
+      navigation.navigate('Signup');
+    });
+    console.log(auth.finally());
+  };
+
   return (
     <ScrollView style={{backgroundColor: '#fff'}}>
-      <View style={{justifyContent: 'center',alignContent:"center",display:"flex",flexDirection:"column", margin: 0}}>
+      <View
+        style={{
+          justifyContent: 'center',
+          alignContent: 'center',
+          display: 'flex',
+          flexDirection: 'column',
+          margin: 0,
+        }}>
         <View style={{alignItems: 'center', marginTop: 20}}>
           <Image
             source={require('../assets/corona.png')}
@@ -107,7 +131,6 @@ const Login = ({navigation}) => {
               flexDirection: 'row',
               alignItems: 'center',
             }}>
-              
             <Image
               source={require('../assets/privacy.png')}
               style={{height: 20, width: 20, resizeMode: 'contain'}}
@@ -145,10 +168,17 @@ const Login = ({navigation}) => {
                 onChangeText={(text) => setPassword(text)}
                 placeholder="Password"
                 style={{marginHorizontal: 5, width: '85%'}}></TextInput>
-              <TouchableOpacity onPress={() => hidePassword()} style={{ right: 0}}>
+              <TouchableOpacity
+                onPress={() => hidePassword()}
+                style={{right: 0}}>
                 <Image
                   source={icon}
-                  style={{height: 20, width: 20, resizeMode: 'contain',tintColor:"#c8c8c8"}}
+                  style={{
+                    height: 20,
+                    width: 20,
+                    resizeMode: 'contain',
+                    tintColor: '#c8c8c8',
+                  }}
                 />
               </TouchableOpacity>
             </View>
@@ -197,7 +227,8 @@ const Login = ({navigation}) => {
               width: '40%',
             }}></View>
         </View>
-        <View
+        <TouchableOpacity
+          onPress={() => fingerAuth()}
           style={{
             display: 'flex',
             justifyContent: 'center',
@@ -208,7 +239,7 @@ const Login = ({navigation}) => {
             source={require('../assets/fingerprint.png')}
             style={{height: 100, width: 100, resizeMode: 'contain'}}
           />
-        </View>
+        </TouchableOpacity>
 
         <View
           style={{
