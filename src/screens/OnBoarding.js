@@ -18,6 +18,7 @@ const OnBoarding = ({navigation}) => {
   return (
     <Onboarding
       onDone={() => onDone()}
+      skipToPage={3}
       pages={[
         {
           backgroundColor: '#fff',

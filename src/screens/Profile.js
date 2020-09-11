@@ -6,12 +6,13 @@ import {
   PermissionsAndroid,
   Text,
   View,
+  SafeAreaView,
   ToastAndroid,
-  ActivityIndicator,
+  StyleSheet,
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import React, {useContext, useEffect, useState} from 'react';
-import {TextInput} from 'react-native-gesture-handler';
+import {TextInput, ScrollView} from 'react-native-gesture-handler';
 
 import {AuthContext} from '../../Context';
 import ImagePicker from 'react-native-image-picker';
@@ -129,41 +130,41 @@ const Profile = ({navigation}) => {
   };
 
   return (
-    <>
-      <View style={{backgroundColor: '#fff', height: '100%'}}>
-        <View
+    <SafeAreaView style={StyleSheet.absoluteFill}>
+      <View
+        style={{
+          height: 56,
+          width: '100%',
+          backgroundColor: 'white',
+          elevation: 5,
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          paddingHorizontal: 10,
+          backgroundColor: '#000027',
+        }}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Image
+            source={require('../assets/back.png')}
+            style={{height: 30, width: 30, tintColor: 'white'}}></Image>
+        </TouchableOpacity>
+        <Text style={{fontSize: 20, color: 'white'}}>Profile</Text>
+        <TouchableOpacity
+          onPress={() => setEdit(!edit)}
           style={{
-            height: 56,
-            width: '100%',
-            backgroundColor: 'white',
-            elevation: 5,
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            paddingHorizontal: 10,
-            backgroundColor: '#000027',
+            justifyContent: 'center',
+            alignItems: 'flex-end',
+            alignSelf: 'center',
+            alignContent: 'flex-end',
           }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Image
-              source={require('../assets/back.png')}
-              style={{height: 30, width: 30, tintColor: 'white'}}></Image>
-          </TouchableOpacity>
-          <Text style={{fontSize: 20, color: 'white'}}>Profile</Text>
-          <TouchableOpacity
-            onPress={() => setEdit(!edit)}
-            style={{
-              justifyContent: 'center',
-              alignItems: 'flex-end',
-              alignSelf: 'center',
-              alignContent: 'flex-end',
-            }}>
-            <Text style={{fontSize: 17, color: 'white'}}>
-              {edit ? 'Cancel' : 'Edit'}
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View>
+          <Text style={{fontSize: 17, color: 'white'}}>
+            {edit ? 'Cancel' : 'Edit'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <ScrollView>
+        <View style={{paddingBottom: 60}}>
           <View
             style={{
               justifyContent: 'center',
@@ -189,6 +190,7 @@ const Profile = ({navigation}) => {
               )}
             </TouchableOpacity>
           </View>
+
           <View
             style={{
               height: 56,
@@ -262,101 +264,100 @@ const Profile = ({navigation}) => {
             <Text style={{color: 'white'}}>Change Password</Text>
           </TouchableOpacity>
         </View>
-        <Modal visible={modalVisible} animationType="slide">
+      </ScrollView>
+
+      <Modal visible={modalVisible} animationType="slide">
+        <View
+          style={{
+            width: '100%',
+            height: 56,
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            backgroundColor: '#000027',
+          }}>
+          <TouchableOpacity
+            style={{
+              marginLeft: 10,
+              marginTop: 20,
+              height: 50,
+              width: 50,
+            }}
+            onPress={() => setModalVisible(false)}>
+            <Image
+              source={require('../assets/back.png')}
+              style={{
+                height: 30,
+                width: 30,
+                resizeMode: 'contain',
+                tintColor: 'white',
+              }}
+            />
+          </TouchableOpacity>
+          <View style={{alignSelf: 'center', margin: '20%'}}>
+            <Text style={{fontSize: 17, color: 'white'}}>Change Password</Text>
+          </View>
+        </View>
+        <View>
           <View
             style={{
-              width: '100%',
               height: 56,
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              backgroundColor: '#000027',
+              borderWidth: 1,
+              borderColor: '#7877fe',
+              margin: 10,
+              borderRadius: 10,
             }}>
-            <TouchableOpacity
-              style={{
-                marginLeft: 10,
-                marginTop: 20,
-                height: 50,
-                width: 50,
-              }}
-              onPress={() => setModalVisible(false)}>
-              <Image
-                source={require('../assets/back.png')}
-                style={{
-                  height: 30,
-                  width: 30,
-                  resizeMode: 'contain',
-                  tintColor: 'white',
-                }}
-              />
-            </TouchableOpacity>
-            <View style={{alignSelf: 'center', margin: '20%'}}>
-              <Text style={{fontSize: 17, color: 'white'}}>
-                Change Password
-              </Text>
-            </View>
+            <TextInput
+              secureTextEntry={true}
+              value={oldPassword}
+              onChangeText={(text) => setOldPass(text)}
+              placeholder="Enter your Old Password"
+              style={{height: '100%', width: '100%'}}></TextInput>
           </View>
-          <View>
-            <View
-              style={{
-                height: 56,
-                borderWidth: 1,
-                borderColor: '#7877fe',
-                margin: 10,
-                borderRadius: 10,
-              }}>
-              <TextInput
-                secureTextEntry={true}
-                value={oldPassword}
-                onChangeText={(text) => setOldPass(text)}
-                placeholder="Enter your Old Password"
-                style={{height: '100%', width: '100%'}}></TextInput>
-            </View>
-            <View
-              style={{
-                height: 56,
-                borderWidth: 1,
-                borderColor: '#7877fe',
-                margin: 10,
-                borderRadius: 10,
-              }}>
-              <TextInput
-                secureTextEntry={true}
-                value={password}
-                onChangeText={(text) => setNewPass(text)}
-                placeholder="Enter your New Password"
-                style={{height: '100%', width: '100%'}}></TextInput>
-            </View>
-            <View
-              style={{
-                height: 56,
-                borderWidth: 1,
-                borderColor: '#7877fe',
-                margin: 10,
-                borderRadius: 10,
-              }}>
-              <TextInput
-                secureTextEntry={true}
-                value={conPass}
-                onChangeText={(text) => setConPass(text)}
-                placeholder="Confirm your New Password"
-                style={{height: '100%', width: '100%'}}></TextInput>
-            </View>
-            <TouchableOpacity
-              onPress={() => updatePass()}
-              style={{
-                backgroundColor: '#7877fe',
-                borderRadius: 10,
-                padding: 15,
-                margin: 10,
-                alignItems: 'center',
-              }}>
-              <Text style={{color: 'white'}}>Save</Text>
-            </TouchableOpacity>
+          <View
+            style={{
+              height: 56,
+              borderWidth: 1,
+              borderColor: '#7877fe',
+              margin: 10,
+              borderRadius: 10,
+            }}>
+            <TextInput
+              secureTextEntry={true}
+              value={password}
+              onChangeText={(text) => setNewPass(text)}
+              placeholder="Enter your New Password"
+              style={{height: '100%', width: '100%'}}></TextInput>
           </View>
-        </Modal>
-      </View>
-    </>
+          <View
+            style={{
+              height: 56,
+              borderWidth: 1,
+              borderColor: '#7877fe',
+              margin: 10,
+              borderRadius: 10,
+            }}>
+            <TextInput
+              secureTextEntry={true}
+              value={conPass}
+              onChangeText={(text) => setConPass(text)}
+              placeholder="Confirm your New Password"
+              style={{height: '100%', width: '100%'}}></TextInput>
+          </View>
+          <TouchableOpacity
+            onPress={() => updatePass()}
+            style={{
+              backgroundColor: '#7877fe',
+              borderRadius: 10,
+              padding: 15,
+              margin: 10,
+              alignItems: 'center',
+            }}>
+            <Text style={{color: 'white'}}>Save</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+    </SafeAreaView>
   );
 };
 

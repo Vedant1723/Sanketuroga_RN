@@ -33,8 +33,11 @@ const App = ({navigation}) => {
         case 'SIGNUP':
           return {
             ...prevState,
+            isLoading: false,
             isSignout: false,
             userToken: action.payload,
+            signInError: null,
+            signUpError: null,
           };
         case 'SIGNIN_ERROR':
           console.log(action.payload);
@@ -83,8 +86,8 @@ const App = ({navigation}) => {
         case 'PASS_ERROR':
           return {
             ...prevState,
-            error: action.payload
-          }  
+            error: action.payload,
+          };
         case 'LOAD_ERROR':
           console.log(action.payload);
           return {
@@ -116,15 +119,16 @@ const App = ({navigation}) => {
 
   React.useEffect(() => {
     setLoading(true);
-    
+
     const bootstrapAsync = async () => {
       let userToken;
       try {
         userToken = await AsyncStorage.getItem('token');
+        dispatch({type: 'RESTORE_TOKEN', token: userToken});
       } catch (e) {
         // Restoring token failed
+        dispatch({type: 'LOAD_ERROR'});
       }
-      dispatch({type: 'RESTORE_TOKEN', token: userToken});
       setLoading(false);
     };
 
@@ -194,7 +198,7 @@ const App = ({navigation}) => {
           },
           body: data,
         };
-        
+
         try {
           const res = await axios.put(
             'https://sanketuroga.herokuapp.com/api/update',
@@ -203,11 +207,11 @@ const App = ({navigation}) => {
           );
           dispatch({type: 'UPDATE_USER', payload: res.data});
         } catch (error) {
-          console.log(error)
+          console.log(error);
           dispatch({type: 'UPDATE_ERROR', payload: error.response.data.error});
         }
       },
-      updatePassword: async(formData) => {
+      updatePassword: async (formData) => {
         const token = await AsyncStorage.getItem('token');
         setAuthToken(token);
         const config = {

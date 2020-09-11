@@ -16,9 +16,7 @@ const Info = () => {
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
-        }} >
-
-            
+        }}>
         <View
           style={{backgroundColor: '#7877fe', margin: 10, borderRadius: 100}}>
           <Image
@@ -113,6 +111,7 @@ const Info = () => {
 
         <ScrollView
           horizontal={true}
+          showsHorizontalScrollIndicator={false}
           style={{
             display: 'flex',
             flexDirection: 'row',

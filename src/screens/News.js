@@ -25,9 +25,10 @@ const News = ({navigation}) => {
   });
   const [loading, setLoading] = useState(true);
   useEffect(() => {
+    const date = new Date().toISOString().slice(0, 10);
     const getNews = async () => {
       const res = await axios.get(
-        'http://newsapi.org/v2/everything?q=Covid&from=2020-07-09&sortBy=popularity&apiKey=053e422e20954f45ba2b8ef037089b7a',
+        `http://newsapi.org/v2/everything?q=Covid&from=${date}&sortBy=popularity&apiKey=053e422e20954f45ba2b8ef037089b7a`,
       );
       setNews(res.data.articles);
       let n = Math.floor(Math.random() * 10);
@@ -65,7 +66,7 @@ const News = ({navigation}) => {
               borderBottomWidth: 0.2,
               justifyContent: 'flex-start',
               alignItems: 'center',
-              flex: 1
+              flex: 1,
             }}
             onPress={() => Linking.openURL(`${url}`)}>
             <Image
@@ -95,122 +96,122 @@ const News = ({navigation}) => {
   return (
     <>
       {loading ? (
-          <View
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              flex: 1,
-            }}>
-            <ActivityIndicator size={50} color="#7877fe" />
-          </View>
-        ) : (
-          <SafeAreaView style={{marginBottom: 106, display: 'flex'}}>
-            <View style={{height: '40%'}}>
-              <View>
-                <Image
-                  style={{resizeMode: 'cover', height: '100%'}}
-                  source={{uri: `${top.urlToImage}`}}
-                />
-              </View>
-              <TouchableOpacity
-                underlayColor="transparent"
-                onPress={() => navigation.openDrawer()}
+        <View
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flex: 1,
+          }}>
+          <ActivityIndicator size={50} color="#7877fe" />
+        </View>
+      ) : (
+        <SafeAreaView style={{marginBottom: 106, display: 'flex'}}>
+          <View style={{height: '40%'}}>
+            <View>
+              <Image
+                style={{resizeMode: 'cover', height: '100%'}}
+                source={{uri: `${top.urlToImage}`}}
+              />
+            </View>
+            <TouchableOpacity
+              underlayColor="transparent"
+              onPress={() => navigation.openDrawer()}
+              style={{
+                position: 'absolute',
+                width: 50,
+                height: 50,
+                left: 10,
+                top: 5,
+              }}>
+              <Image
                 style={{
                   position: 'absolute',
-                  width: 50,
-                  height: 50,
-                  left: 10,
-                  top: 5,
-                }}>
-                <Image
-                  style={{
-                    position: 'absolute',
-                    width: 30,
-                    height: 30,
-                    left: 20,
-                    top: 20,
-                  }}
-                  source={require('../assets/menu.png')}
-                />
-              </TouchableOpacity>
+                  width: 30,
+                  height: 30,
+                  left: 20,
+                  top: 20,
+                }}
+                source={require('../assets/menu.png')}
+              />
+            </TouchableOpacity>
+            <View
+              style={{
+                position: 'absolute',
+                bottom: 0,
+                flexShrink: 1,
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'flex-start',
+                alignItems: 'flex-start',
+                backgroundColor: 'rgba(52, 52, 52, 0.3)',
+              }}>
               <View
                 style={{
-                  position: 'absolute',
-                  bottom: 0,
-                  flexShrink: 1,
-                  width: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'flex-start',
-                  alignItems: 'flex-start',
-                  backgroundColor: 'rgba(52, 52, 52, 0.3)',
+                  borderRadius: 20,
+                  backgroundColor: '#f65355',
+                  marginHorizontal: 10,
+                  marginBottom: 10,
                 }}>
-                <View
-                  style={{
-                    borderRadius: 20,
-                    backgroundColor: '#f65355',
-                    marginHorizontal: 10,
-                    marginBottom: 10,
-                  }}>
-                  <Text
-                    style={{
-                      color: 'white',
-                      marginHorizontal: 10,
-                      marginBottom: 5,
-                      marginTop: 5,
-                    }}>
-                    Highlights
-                  </Text>
-                </View>
-                <View style={{marginBottom: 10}}>
-                  <Text
-                    style={{
-                      color: 'white',
-                      fontSize: 20,
-                      fontWeight: 'bold',
-                      marginHorizontal: 10,
-                    }}>
-                    {top.title}
-                  </Text>
-                </View>
-                <TouchableOpacity
-                  style={{marginBottom: 10}}
-                  onPress={() => Linking.openURL(`${top.url}`)}>
-                  <Text style={{color: 'white', marginHorizontal: 10}}>
-                    Read more >
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-            <ScrollView>
-              <View>
                 <Text
                   style={{
-                    fontWeight: 'bold',
-                    fontSize: 15,
-                    marginHorizontal: 20,
-                    marginTop: 10,
-                    marginBottom: 10,
+                    color: 'white',
+                    marginHorizontal: 10,
+                    marginBottom: 5,
+                    marginTop: 5,
                   }}>
-                  Related News
+                  Highlights
                 </Text>
               </View>
-              <FlatList
-                data={news && news}
-                // keyExtractor={(index) =>  index}
-                renderItem={({item}) => (
-                  <Item
-                    title={item.title}
-                    publishedAt={item.publishedAt}
-                    urlToImage={item.urlToImage}
-                    url={item.url}
-                  />
-                )}
-              />
-            </ScrollView>
-          </SafeAreaView>
-        )}
+              <View style={{marginBottom: 10}}>
+                <Text
+                  style={{
+                    color: 'white',
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                    marginHorizontal: 10,
+                  }}>
+                  {top.title}
+                </Text>
+              </View>
+              <TouchableOpacity
+                style={{marginBottom: 10}}
+                onPress={() => Linking.openURL(`${top.url}`)}>
+                <Text style={{color: 'white', marginHorizontal: 10}}>
+                  Read more {'>'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          <ScrollView>
+            <View>
+              <Text
+                style={{
+                  fontWeight: 'bold',
+                  fontSize: 15,
+                  marginHorizontal: 20,
+                  marginTop: 10,
+                  marginBottom: 10,
+                }}>
+                Related News
+              </Text>
+            </View>
+            <FlatList
+              data={news && news}
+              // keyExtractor={(index) =>  index}
+              renderItem={({item}) => (
+                <Item
+                  title={item.title}
+                  publishedAt={item.publishedAt}
+                  urlToImage={item.urlToImage}
+                  url={item.url}
+                />
+              )}
+            />
+          </ScrollView>
+        </SafeAreaView>
+      )}
     </>
   );
 };
